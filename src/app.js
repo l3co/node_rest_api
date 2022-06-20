@@ -11,24 +11,18 @@ const app = express();
 
 app.use(express.json()) // for parsing application/json
 
-app.get("/", (req, resp) => {
+app.get("/", (_, resp) => {
     resp.status(200).send("Curso de Node");
 })
 
-app.get("/livros", (req, resp) => {
-    livros.find((err, livros) => {
-        if (err) {
-            console.error("Erro para buscar os livros", err)
-        }
-        else {
-            resp.status(200).json(livros)
-        }
-    })
+app.get("/livros", (_, resp) => {
+    livros.find((err, livros) => tratarResultado(err, livros, resp))
 })
 
 app.get("/livros/:id", (req, resp) => {
-    let index = buscarLivro(req.params.id)
-    resp.status(200).json(livros[index])
+    let id = req.params.id;
+    livros.findById(id, (err, livro) => tratarResultado(err, livro, resp));
+
 })
 
 app.post("/livros", (req, resp) => {
@@ -50,8 +44,12 @@ app.delete("/livros/:id", (req, resp) => {
     resp.send(`livro ${index} removido com sucesso`)
 })
 
-function buscarLivro(id) {
-    return livros.findIndex(livro => livro.id == id)
+function tratarResultado(err, result, respose) {
+    if (err) {
+        console.err(`Erro ao buscar os dados: `, err);
+    } else {
+        respose.status(200).json(result)
+    }
 }
 
 export default app
