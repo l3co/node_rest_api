@@ -1,5 +1,6 @@
 import express from "express";
-import db from "../config/dbConnection.js";
+import db from "./config/dbConnection.js";
+import livros from "./models/Livros.js"
 
 db.on("error", console.log.bind(console, "Erro de conexão"))
 db.on("open", () => {
@@ -10,27 +11,19 @@ const app = express();
 
 app.use(express.json()) // for parsing application/json
 
-const livros = [
-    {
-        id: 1,
-        titulo: "Senhor dos Aneis"
-    },
-    {
-        id: 2,
-        titulo: "O Hobiit"
-    }
-]
-
 app.get("/", (req, resp) => {
-    resp
-        .status(200)
-        .send("Curso de Node");
+    resp.status(200).send("Curso de Node");
 })
 
 app.get("/livros", (req, resp) => {
-    resp
-        .status(200)
-        .json(livros)
+    livros.find((err, livros) => {
+        if (err) {
+            console.error("Erro para buscar os livros", err)
+        }
+        else {
+            resp.status(200).json(livros)
+        }
+    })
 })
 
 app.get("/livros/:id", (req, resp) => {
