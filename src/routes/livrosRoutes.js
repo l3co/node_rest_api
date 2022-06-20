@@ -7,6 +7,8 @@ const controller = new LivrosController()
 
 routes
     .get("/livros", controller.listarLivros)
+    .get("/livros/:id", controller.buscarPeloID)
+    .post("/livros", controller.cadastrar)
 
 
 export default routes
