@@ -1,6 +1,8 @@
 import express from "express";
 import db from "./config/dbConnection.js";
-import livros from "./models/Livros.js"
+import livros from "./models/Livros.js";
+
+import routes from "./routes/index.js";
 
 db.on("error", console.log.bind(console, "Erro de conexão"))
 db.on("open", () => {
@@ -8,15 +10,11 @@ db.on("open", () => {
 })
 
 const app = express();
+routes(app)
 
-app.use(express.json()) // for parsing application/json
 
 app.get("/", (_, resp) => {
     resp.status(200).send("Curso de Node");
-})
-
-app.get("/livros", (_, resp) => {
-    livros.find((err, livros) => tratarResultado(err, livros, resp))
 })
 
 app.get("/livros/:id", (req, resp) => {
@@ -43,13 +41,5 @@ app.delete("/livros/:id", (req, resp) => {
     livros.splice(index, 1)
     resp.send(`livro ${index} removido com sucesso`)
 })
-
-function tratarResultado(err, result, respose) {
-    if (err) {
-        console.err(`Erro ao buscar os dados: `, err);
-    } else {
-        respose.status(200).json(result)
-    }
-}
 
 export default app
