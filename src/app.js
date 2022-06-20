@@ -12,24 +12,6 @@ db.on("open", () => {
 const app = express();
 routes(app)
 
-
-app.get("/", (_, resp) => {
-    resp.status(200).send("Curso de Node");
-})
-
-app.get("/livros/:id", (req, resp) => {
-    let id = req.params.id;
-    livros.findById(id, (err, livro) => tratarResultado(err, livro, resp));
-
-})
-
-app.post("/livros", (req, resp) => {
-    livros.push(req.body)
-    resp
-        .status(201)
-        .send("Livro cadastrado com sucesso")
-})
-
 app.put("/livros/:id", (req, resp) => {
     let index = buscarLivro(req.params.id)
     livros[index].titulo = req.body.titulo
