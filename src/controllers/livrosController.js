@@ -1,16 +1,28 @@
 import livros from "../models/Livros.js";
 
 export default class LivrosController {
-    listarLivros = (_, resp) => {
-        livros.find((err, livros) => this.#tratarResultado(err, livros, resp))
+    static listarLivros = (_, resp) => {
+        livros.find((err, livros) => {
+            if (err) {
+                resp.status(400).send({ "message": err.message })
+            } else {
+                resp.status(200).json(livros)
+            }
+        })
     }
 
-    buscarPeloID = (req, resp) => {
+    static buscarPeloID = (req, resp) => {
         let id = req.params.id;
-        livros.findById(id, (err, livro) => this.#tratarResultado(err, livro, resp));
+        livros.findById(id, (err, livro) => {
+            if (err) {
+                resp.status(400).send({ "message": err.message })
+            } else {
+                resp.status(200).json(livro)
+            }
+        });
     }
 
-    cadastrar = (req, resp) => {
+    static cadastrar = (req, resp) => {
         let livro = new livros(req.body);
         livro.save((err) => {
             if (err) {
@@ -21,11 +33,25 @@ export default class LivrosController {
         })
     }
 
-    #tratarResultado(err, result, respose) {
-        if (err) {
-            console.err(`Erro ao buscar os dados: `, err);
-        } else {
-            respose.status(200).json(result)
-        }
+    static atualizarLivro = (req, resp) => {
+        let id = req.params.id;
+        livros.findByIdAndUpdate(id, { $set: req.body }, (err) => {
+            if (err) {
+                resp.status(500).send({ "message": err.message })
+            } else {
+                resp.status(200).send({ "message": "livro atualizado com sucesso" })
+            }
+        })
+    }
+
+    static excluirLivro = (req, resp) => {
+        let id = req.params.id;
+        livros.findByIdAndDelete(id, (err) => {
+            if (err) {
+                resp.status(500).send({ "message": err.message })
+            } else {
+                resp.status(200).send({ "message": "livro removido com sucesso" })
+            }
+        })
     }
 }
