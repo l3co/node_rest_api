@@ -2,13 +2,15 @@ import livros from "../models/Livros.js";
 
 export default class LivrosController {
     static listarLivros = (_, resp) => {
-        livros.find((err, livros) => {
-            if (err) {
-                resp.status(400).send({ "message": err.message })
-            } else {
-                resp.status(200).json(livros)
-            }
-        })
+        livros.find()
+            .populate("autor")
+            .exec((err, livros) => {
+                if (err) {
+                    resp.status(400).send({ "message": err.message })
+                } else {
+                    resp.status(200).json(livros)
+                }
+            })
     }
 
     static buscarPeloID = (req, resp) => {
