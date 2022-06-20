@@ -3,7 +3,7 @@ import livros from "../models/Livros.js";
 export default class LivrosController {
     static listarLivros = (_, resp) => {
         livros.find()
-            .populate("autor")
+            .populate(["autor", "editora"])
             .exec((err, livros) => {
                 if (err) {
                     resp.status(400).send({ "message": err.message })
